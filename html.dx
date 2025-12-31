@@ -1,0 +1,42 @@
+const cursos = [];
+
+function addCurso() {
+    const title = document.getElementById('cursoTitle').value;
+    const description = document.getElementById('cursoDescription').value;
+    const date = document.getElementById('cursoDate').value;
+    const certificate = document.getElementById('cursoCertificate').files[0];
+
+    if (title && description) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            cursos.push({ title, description, date, certificate: event.target.result });
+            document.getElementById('cursoTitle').value = '';
+            document.getElementById('cursoDescription').value = '';
+            document.getElementById('cursoDate').value = '';
+            document.getElementById('cursoCertificate').value = '';
+            renderCursos();
+        };
+        reader.readAsDataURL(certificate); // Convertir el archivo a una URL
+    }
+}
+
+function renderCursos() {
+    const cursosList = document.getElementById('cursosList');
+    cursosList.innerHTML = '';
+    cursos.forEach((curso, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <h3>${curso.title}</h3>
+            <p>${curso.description}</p>
+            <p>Fecha: ${curso.date}</p>
+            <a href="${curso.certificate}" target="_blank">Ver Certificado</a>
+            <button onclick="removeCurso(${index})">Eliminar</button>
+        `;
+        cursosList.appendChild(div);
+    });
+}
+
+function removeCurso(index) {
+    cursos.splice(index, 1);
+    renderCursos();
+}
